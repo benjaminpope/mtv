@@ -85,7 +85,9 @@ parula_colors = np.array(parula_colors)
 
 
 def load_lightcurve(starname):
-    data_all = lk.search_lightcurvefile(starname).download_all()
+    search = lk.search_lightcurvefile(starname)
+    search = search[np.where(search.target_name==search.target_name[0])]
+    data_all = search.download_all()
     tics, time, flux, errs, sects = [] ,[] ,[], [], []
 
     for data in data_all:
@@ -159,7 +161,10 @@ def do_plots(tics,time,flux,avg_preds,errs,data_all):
     fig, axes = plt.subplots(ncols=ngroups, figsize=(ngroups*7,4),
                                sharey=True, gridspec_kw={'width_ratios':width_ratios})
     for j, g in enumerate(groups):
-        ax = axes[j]
+        if len(groups)>1:
+            ax = axes[j]
+        else:
+            ax = axes
         if j == 0:
             ax.set_ylabel('Normalized Flux')
         for i in g:
@@ -171,5 +176,7 @@ def do_plots(tics,time,flux,avg_preds,errs,data_all):
             ss = [sectors[s] for s in g]
             ax.set_title('Sectors ' + ", ".join([str(s) for s in ss]),y=1.01)
         ax.set_xlabel('TJD')
-    plt.ylim(0.97,1.1)
+    yrange = np.percentile(np.hstack(flux),(2,50,98))
+    lims = (yrange[1]-1.0*(yrange[2]-yrange[0]), yrange[1]+1.0*(yrange[2]-yrange[0]))
+    plt.ylim(*lims)
     plt.subplots_adjust(wspace=0.1)
