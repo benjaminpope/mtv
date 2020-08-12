@@ -85,7 +85,7 @@ parula_colors = np.array(parula_colors)
 
 
 def load_lightcurve(starname):
-    search = lk.search_lightcurvefile(starname,radius=5.)
+    search = lk.search_lightcurvefile(starname,radius=1.)
     search = search[np.where(search.target_name==search.target_name[0])]
     data_all = search.download_all()
     tics, time, flux, errs, sects = [] ,[] ,[], [], []
