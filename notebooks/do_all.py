@@ -17,7 +17,8 @@ from scripts import *
 from astropy.table import Table
 plt.rcParams['font.size'] = 20
 
-targets = Table.read('names_best_cands_4sig_stokesv_clean_leakage_gaia_propermotion_applied stars_added_2019_10_24.fits')
+targets = Table.read('names_best_cands_4sig_stokesv_clean_leakage_gaia_propermotion_applied stars_added_2019_10_24.fits') # file 1
+targets = Table.read('m_dwarf_dections_27_03_20_correct_fluxes.fits')
 names = targets['common_name']
 
 savedir = 'results/'
