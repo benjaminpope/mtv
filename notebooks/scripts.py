@@ -84,8 +84,8 @@ for i in range(cmap.N):
 parula_colors = np.array(parula_colors)
 
 
-def load_lightcurve(starname):
-    search = lk.search_lightcurvefile(starname,radius=1.)
+def load_lightcurve(starname,radius=1.):
+    search = lk.search_lightcurvefile(starname,radius=radius)
     search = search[np.where(search.target_name==search.target_name[0])]
     data_all = search.download_all()
     tics, time, flux, errs, sects = [] ,[] ,[], [], []
