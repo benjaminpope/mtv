@@ -5,7 +5,10 @@ from tqdm import tqdm_notebook
 
 import lightkurve as lk
 import stella
+
 from astropy import units as u
+from astropy.time import Time, TimeDelta
+
 
 import glob, os, sys
 
@@ -84,7 +87,7 @@ for i in range(cmap.N):
 parula_colors = np.array(parula_colors)
 
 
-def load_lightcurve(starname,radius=1.):
+def load_lightcurve(starname,radius=10.):
     search = lk.search_lightcurvefile(starname,radius=radius)
     search = search[np.where(search.target_name==search.target_name[0])]
     data_all = search.download_all()
@@ -154,7 +157,7 @@ def group_sectors(data_all):
     groups = [list([sectors.index(k) for k in j]) for j in mit.consecutive_groups(sorted(list(set(sectors))))]
     return groups,sectors
 
-def do_plots(tics,time,flux,avg_preds,errs,data_all):
+def do_plots(tics,time,flux,avg_preds,errs,data_all,zoom=True):
     groups,sectors = group_sectors(data_all)
     ngroups = len(groups)
     width_ratios = [len(group) for group in groups] 
@@ -177,6 +180,28 @@ def do_plots(tics,time,flux,avg_preds,errs,data_all):
             ax.set_title('Sectors ' + ", ".join([str(s) for s in ss]),y=1.01)
         ax.set_xlabel('TJD')
     yrange = np.percentile(np.hstack(flux),(2,50,98))
-    lims = (yrange[1]-1.0*(yrange[2]-yrange[0]), yrange[1]+1.0*(yrange[2]-yrange[0]))
-    plt.ylim(*lims)
+    
+    if zoom:
+      lims = (yrange[1]-1.0*(yrange[2]-yrange[0]), yrange[1]+1.0*(yrange[2]-yrange[0]))
+      plt.ylim(*lims)
     plt.subplots_adjust(wspace=0.1)
+
+def simultaneous_plots(tics,time,flux,avg_preds,errs,data_all,tstart):
+    dates = lk.btjd_to_astropy_time(np.hstack(time))
+    t = Time(tstart, format='isot', scale='utc')
+    dt = TimeDelta(3600.*8., format='sec')
+    tfinish = t+dt
+
+    fig = plt.figure(figsize=(8.0,6.0))
+    plt.scatter(dates.decimalyear-2020,np.hstack(flux),c=np.hstack(avg_preds),
+                        vmin=0, vmax=1, s=6)
+    # plt.xlim(t.decimalyear-2020,tfinish.decimalyear-2020)
+    plt.axvline(t.decimalyear-2020)
+    plt.axvline(tfinish.decimalyear-2020)
+    plt.xlabel('Decimal Year - 2020')
+    plt.ylabel('Flux')
+    # plt.ylim(0.98,1.01)
+    # plt.xlim(t.decimalyear-2020-0.05,tfinish.decimalyear-2020+0.05)
+    plt.colorbar()
+    # plt.title(name+' Simultaneous TESS')
+
