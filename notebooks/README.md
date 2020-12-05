@@ -6,9 +6,11 @@
 
 `paper_version.py` - reads in all of the data and analyses it with `stella`
 
-`paper_simultaneous.py` - does simultaneous plots, loads flare predictions just from paper_version.py 
+`paper_simultaneous.py` - does simultaneous plots, loads flare predictions just from `paper_version.py`.
 
-`vetting_plots.py` - the output from `stella` includes many false positives. Generate plots in `results/simultaneous/vetting` to flag these by eye.
+`collect_paper.py` - generate tables from files produced in `paper_version.py`.
+
+`vetting_plots.py` - the output from `stella` includes many false positives. Generate plots in `results/simultaneous/vetting` to flag these by eye. Then run `collect_paper.py` again.
 
 ---------------
 
