@@ -14,6 +14,9 @@ import glob, os, sys
 
 from astropy.table import Table
 plt.rcParams['font.size'] = 20
+plt.rcParams["font.family"] = "Times New Roman"
+plt.rcParams['savefig.dpi']= 300             #72 
+
 
 import more_itertools as mit
 
@@ -186,7 +189,7 @@ def do_plots(tics,time,flux,avg_preds,errs,data_all,zoom=True):
       plt.ylim(*lims)
     plt.subplots_adjust(wspace=0.1)
 
-def simultaneous_plots(tics,time,flux,avg_preds,errs,data_all,tstart):
+def simultaneous_plots(tics,time,flux,avg_preds,errs,data_all,tstart,limit=True):
     dates = lk.btjd_to_astropy_time(np.hstack(time))
     t = Time(tstart, format='isot', scale='utc')
     dt = TimeDelta(3600.*8., format='sec')
@@ -195,7 +198,8 @@ def simultaneous_plots(tics,time,flux,avg_preds,errs,data_all,tstart):
     fig = plt.figure(figsize=(8.0,6.0))
     plt.scatter(dates.decimalyear-2020,np.hstack(flux),c=np.hstack(avg_preds),
                         vmin=0, vmax=1, s=6)
-    # plt.xlim(t.decimalyear-2020,tfinish.decimalyear-2020)
+    if limit:
+      plt.xlim(t.decimalyear-2020,tfinish.decimalyear-2020)
     plt.axvline(t.decimalyear-2020)
     plt.axvline(tfinish.decimalyear-2020)
     plt.xlabel('Decimal Year - 2020')
