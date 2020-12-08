@@ -86,6 +86,10 @@ for j in range(len(names)):
 
     nsectors = len(time)
 
+    print('Getting rotation period')
+    period = get_rotation_period(tics,time,flux,errs)
+    print('Period:',period,'d\n')
+
     avg_preds = []
     for j in range(len(sects)):
         avg_preds.append(Table.read('avg_preds_%s_%d.csv' % (name.replace(' ','_').lower(), j))['avg_preds'].data)
@@ -95,7 +99,7 @@ for j in range(len(names)):
     flare_table.write('%sflares_%s.csv' % (savedir,name.replace(' ','_').lower()),format='ascii')
     print('Saved flare table to %sflares_%s.csv' % (savedir,name.replace(' ','_').lower()))
 
-    flare_rate = get_flare_rate(time,flare_table)
+    flare_rate = get_flare_rate(time,flare_table,name=name)
     print('Flare rate:',flare_rate)
 
     do_plots(tics,time,flux,avg_preds,errs,data_all)
@@ -118,10 +122,10 @@ for j in range(len(names)):
 
         print('Saved simultaneous plots to %s' % figname)
 
-    # f = open('%s%s_output.txt' % (savedir,name.replace(' ','_').lower()),'w')
-    # f.write('%s\n%f\n%f\n%d\n%d\n' % (name,period,flare_rate.value,nsectors,tic))
-    # f.close()
-    # print('Saved fit to %s%s_output.txt' % (savedir,name.replace(' ','_').lower()))
+    f = open('%s%s_output.txt' % (savedir,name.replace(' ','_').lower()),'w')
+    f.write('%s\n%f\n%f\n%d\n%d\n' % (name,period,flare_rate.value,nsectors,tic))
+    f.close()
+    print('Saved fit to %s%s_output.txt' % (savedir,name.replace(' ','_').lower()))
     # except:
     #     print('\nFailed on %s' % name)
     #     failures.append(name)

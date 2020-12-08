@@ -47,15 +47,24 @@ savedir = 'results/simultaneous/'
 # all_preds = []
 
 for name in names:
+    if name != 'WX Uma':
+        continue
+
     print('Doing %s' % name)
 
     flares = Table.read('%sflares_%s.csv' % (savedir,name.replace(' ','_').lower()),format='ascii')
 
     tic = data['TIC'][np.where(data['Name']==name)]
     search = lk.search_lightcurvefile('TIC %d' % tic) # why is the TIC wrong?
-    # print(search)
-    lcs = search.download_all().stitch().remove_nans().normalize()
-    # all_lcs.append(lcs)
+
+    if name == 'WX Uma':
+        print('Doing a special reduction for WX UMa')
+        tpf = lk.search_targetpixelfile('TIC 252803603').download()
+        corrector = lk.TessPLDCorrector(tpf)
+        lcs = corrector.correct().remove_nans().normalize()
+    else:
+        lcs = search.download_all().stitch().remove_nans().normalize()
+        # all_lcs.append(lcs)
     avg_preds = []
     for j in range(len(search)):
         avg_preds.append(Table.read('avg_preds_%s_%d.csv' % (name.replace(' ','_').lower(), j))['avg_preds'].data)
