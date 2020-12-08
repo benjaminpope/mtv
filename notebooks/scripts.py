@@ -80,6 +80,22 @@ cm_data = [[0.2081, 0.1663, 0.5292], [0.2116238095, 0.1897809524, 0.5776761905],
   0.0948380952], [0.9661, 0.9514428571, 0.0755333333], 
  [0.9763, 0.9831, 0.0538]]
 
+false_pos = {'2MASS J09481615+5114518': [],
+            '2MASS J14333139+3417472': [5],
+            'CR Dra': [12,63],
+            'CW UMa': [],
+            'DG CVn': [10,12,14,15],
+            'DO Cep': [],
+            'G 240-45': [0,1],
+            'GJ 1151': [0],
+            'GJ 3861': [],
+            'GJ 450': [],
+            'GJ 625': [], 
+            'LP 169-22': [],
+            'LP 212-62': [],
+            'LP 259-39': [],
+            'WX Uma': [0]}
+
 parula = LinearSegmentedColormap.from_list('parula', cm_data)
 
 parula_colors = []
@@ -91,13 +107,22 @@ parula_colors = np.array(parula_colors)
 
 
 def load_lightcurve(starname,radius=10.):
-    search = lk.search_lightcurvefile(starname,radius=radius)
-    search = search[np.where(search.target_name==search.target_name[0])]
-    data_all = search.download_all()
+    if starname == 'WX Uma' or starname == 'TIC 252803603':
+      print('Doing a special reduction for WX UMa')
+      tpf = lk.search_targetpixelfile('TIC 252803603').download()
+      corrector = lk.TessPLDCorrector(tpf)
+      data_all = [corrector.correct()]
+    else:
+      search = lk.search_lightcurvefile(starname,radius=radius)
+      search = search[np.where(search.target_name==search.target_name[0])]
+      data_all = search.download_all()
     tics, time, flux, errs, sects = [] ,[] ,[], [], []
 
     for data in data_all:
-        d = data.PDCSAP_FLUX.remove_nans().normalize()
+        try:
+          d = data.PDCSAP_FLUX.remove_nans().normalize()
+        except:
+          d = data.remove_nans().normalize()
         time.append(d.time)
         flux.append(d.flux)
         errs.append(d.flux_err)
@@ -148,11 +173,15 @@ def get_flares(tics,time,flux,avg_preds,errs):
     ff.identify_flare_peaks(threshold=0.6)
     return ff.flare_table
 
-def get_flare_rate(time,flare_table):
+def get_flare_rate(time,flare_table,name=None):
     totaltime = 0
     for i in range(len(time)):
         totaltime += (len(time[i])*2)
     totaltime = (totaltime*u.minute).to(u.day)
+    
+    if name is not None:
+      flare_table.remove_rows(false_pos[name])
+      print('Removing %d flares' % len(false_pos[name]))
     return np.nansum(flare_table['prob'])/totaltime
 
 def group_sectors(data_all):
