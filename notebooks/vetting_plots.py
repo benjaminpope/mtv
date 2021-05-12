@@ -47,8 +47,8 @@ savedir = 'results/simultaneous/'
 # all_preds = []
 
 for name in names:
-    if name != 'WX Uma':
-        continue
+    # if name != 'WX Uma':
+    #     continue
 
     print('Doing %s' % name)
 
