@@ -25,10 +25,12 @@ import more_itertools as mit
 Port of Adina's script for CR Dra analysis with
 stella
 -----------------------------------------------'''
-model_dir = '/Users/benjaminpope/Downloads/run01/'
+
+# model_dir = '/Users/benjaminpope/Downloads/run01/'
+model_dir = '/Users/benjaminpope/.stella/models/'
+
 models = [os.path.join(model_dir,i) for i in
           os.listdir(model_dir) if i.endswith('.h5')]
-
 
 
 '''-----------------------------------------------
@@ -123,7 +125,7 @@ def load_lightcurve(starname,radius=10.):
           d = data.PDCSAP_FLUX.remove_nans().normalize()
         except:
           d = data.remove_nans().normalize()
-        time.append(d.time)
+        time.append(d.time.value)
         flux.append(d.flux)
         errs.append(d.flux_err)
         tics.append(d.targetid)

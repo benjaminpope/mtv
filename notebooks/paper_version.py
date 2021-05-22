@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
-from astropy.table import Table
+from astropy.table import Table, Column
 import lightkurve as lk
 from matplotlib.collections import LineCollection
 from tqdm import tqdm_notebook
@@ -22,8 +22,11 @@ for the paper.
 ------------------------------------------------'''
 
 targets = Table.read('../data/lofartesscallingham.csv',format='ascii') # https://docs.google.com/spreadsheets/d/1k2le1xcRh-fbvqsZdP5cu_4tuGaiuwlf1NxZHdaXN1A/edit#gid=0
+targets = targets[targets['Type']=='M Dwarf'] # restrict it to m dwarfs
+targets = targets[targets['TESS?'] != 'N'] # restrict it to have tess data
 names = targets['Name']
 print(targets.keys())
+print(names)
 
 savedir = 'results/reanalysis/'
 
@@ -63,9 +66,9 @@ for j in range(len(names)):
         print('No data for %s, continuing' % str(name))
         continue
 
-    if '%s%s_output.txt' % (savedir,name.replace(' ','_').lower()) in saved_files:
-        print('\n\nAlready done',name)
-        continue
+    # if '%s%s_output.txt' % (savedir,name.replace(' ','_').lower()) in saved_files:
+    #     print('\n\nAlready done',name)
+    #     continue
 
     print('\n\nDoing target %d/%d: %s' % (j, len(names),name))
 
@@ -90,6 +93,10 @@ for j in range(len(names)):
 
     print('Running CNN')
     avg_preds = run_cnn(tics,time,flux,errs)
+    for j, pred in enumerate(avg_preds):
+      col1, col2 = Column(time[j],name='time'), Column(pred,name='avg_preds')
+      Table([col1,col2]).write('avg_preds_%s_%d.csv' % (name.replace(' ','_').lower(), j))
+    print('Saved avg_preds')
 
     flare_table = get_flares(tics,time,flux,avg_preds,errs)
     flare_table.write('%sflares_%s.csv' % (savedir,name.replace(' ','_').lower()),format='ascii')

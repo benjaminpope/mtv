@@ -48,6 +48,8 @@ for j in range(len(names)):
 
         print('Running CNN')
         avg_preds = run_cnn(tics,time,flux,errs)
+        for j, pred in enumerate(avg_preds):
+            Table(pred).write('avg_preds_%s_%d.csv' % (name.replace(' ','_').lower(), j))
 
         flare_table = get_flares(tics,time,flux,avg_preds,errs)
         flare_table.write('%sflares_%s.csv' % (savedir,name.replace(' ','_').lower()),format='ascii')
