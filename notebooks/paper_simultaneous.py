@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
-from astropy.table import Table
+from astropy.table import Table, Column
 import lightkurve as lk
 from matplotlib.collections import LineCollection
 from tqdm import tqdm_notebook
