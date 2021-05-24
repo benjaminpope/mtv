@@ -66,9 +66,9 @@ for j in range(len(names)):
         print('No data for %s, continuing' % str(name))
         continue
 
-    # if '%s%s_output.txt' % (savedir,name.replace(' ','_').lower()) in saved_files:
-    #     print('\n\nAlready done',name)
-    #     continue
+    if '%s%s_output.txt' % (savedir,name.replace(' ','_').lower()) in saved_files:
+        print('\n\nAlready done',name)
+        continue
 
     print('\n\nDoing target %d/%d: %s' % (j, len(names),name))
 
@@ -95,7 +95,7 @@ for j in range(len(names)):
     avg_preds = run_cnn(tics,time,flux,errs)
     for j, pred in enumerate(avg_preds):
       col1, col2 = Column(time[j],name='time'), Column(pred,name='avg_preds')
-      Table([col1,col2]).write('avg_preds_%s_%d.csv' % (name.replace(' ','_').lower(), j))
+      Table([col1,col2]).write('%savg_preds_%s_%d.csv' % (savedir,name.replace(' ','_').lower(), j))
     print('Saved avg_preds')
 
     flare_table = get_flares(tics,time,flux,avg_preds,errs)

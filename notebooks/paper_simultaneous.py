@@ -92,7 +92,7 @@ for j in range(len(names)):
 
     avg_preds = []
     for j in range(len(sects)):
-        avg_preds.append(Table.read('avg_preds_%s_%d.csv' % (name.replace(' ','_').lower(), j))['avg_preds'].data)
+        avg_preds.append(Table.read('results/reanalysis/avg_preds_%s_%d.csv' % (name.replace(' ','_').lower(), j))['avg_preds'].data)
     avg_preds = np.array(avg_preds)
 
     flare_table = get_flares(tics,time,flux,avg_preds,errs)
