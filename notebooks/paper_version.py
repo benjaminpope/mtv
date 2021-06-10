@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+
+from scripts import *
+
 from astropy import units as u
-from astropy.table import Table, Column
 import lightkurve as lk
 from matplotlib.collections import LineCollection
 from tqdm import tqdm_notebook
@@ -11,9 +13,8 @@ import glob, os
 import warnings
 warnings.filterwarnings("ignore")
 
-from scripts import *
+from astropy.table import Table, Column, unique
 
-from astropy.table import Table
 plt.rcParams['font.size'] = 20
 
 '''------------------------------------------------
@@ -91,14 +92,20 @@ for j in range(len(names)):
     period = get_rotation_period(tics,time,flux,errs)
     print('Period:',period,'d\n')
 
-    print('Running CNN')
-    avg_preds = run_cnn(tics,time,flux,errs)
-    for j, pred in enumerate(avg_preds):
-      col1, col2 = Column(time[j],name='time'), Column(pred,name='avg_preds')
-      Table([col1,col2]).write('%savg_preds_%s_%d.csv' % (savedir,name.replace(' ','_').lower(), j))
-    print('Saved avg_preds')
+    try:
+        avg_preds = []
+        for j in range(len(time)):
+            avg_preds.append(Table.read('%savg_preds_%s_%d.csv' % (savedir,name.replace(' ','_').lower(), j))['avg_preds'].data)
+        print('Loaded previously saved avg_preds')
+    except:
+        print('Running CNN')
+        avg_preds = run_cnn(tics,time,flux,errs)
+        for j, pred in enumerate(avg_preds):
+          col1, col2 = Column(time[j],name='time'), Column(pred,name='avg_preds')
+          Table([col1,col2]).write('%savg_preds_%s_%d.csv' % (savedir,name.replace(' ','_').lower(), j))
+        print('Saved avg_preds')
 
-    flare_table = get_flares(tics,time,flux,avg_preds,errs)
+    flare_table = unique(get_flares(tics,time,flux,avg_preds,errs))
     flare_table.write('%sflares_%s.csv' % (savedir,name.replace(' ','_').lower()),format='ascii')
     print('Saved flare table to %sflares_%s.csv' % (savedir,name.replace(' ','_').lower()))
 

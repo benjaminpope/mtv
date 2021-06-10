@@ -1,5 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+
+from scripts import *
+
 from astropy import units as u
 from astropy.table import Table, Column
 import lightkurve as lk
@@ -10,8 +13,6 @@ import glob, os
 
 import warnings
 warnings.filterwarnings("ignore")
-
-from scripts import *
 
 from astropy.table import Table
 plt.rcParams['font.size'] = 20
