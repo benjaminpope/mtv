@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
+import matplotlib as mpl
 from tqdm import tqdm_notebook
 
 import lightkurve as lk
@@ -9,10 +10,9 @@ import stella
 from astropy import units as u
 from astropy.time import Time, TimeDelta
 
-
 import glob, os, sys
 
-from astropy.table import Table
+from astropy.table import Table, unique
 plt.rcParams['font.size'] = 20
 plt.rcParams["font.family"] = "Times New Roman"
 plt.rcParams['savefig.dpi']= 300             #72 
@@ -38,7 +38,7 @@ First define the colourmap
 -----------------------------------------------'''
 
 from matplotlib.colors import LinearSegmentedColormap
-from pylab import *
+from pylab import cm
 
 cm_data = [[0.2081, 0.1663, 0.5292], [0.2116238095, 0.1897809524, 0.5776761905], 
  [0.212252381, 0.2137714286, 0.6269714286], [0.2081, 0.2386, 0.6770857143], 
@@ -82,9 +82,9 @@ cm_data = [[0.2081, 0.1663, 0.5292], [0.2116238095, 0.1897809524, 0.5776761905],
   0.0948380952], [0.9661, 0.9514428571, 0.0755333333], 
  [0.9763, 0.9831, 0.0538]]
 
-false_pos = {'2MASS J09481615+5114518': [],
-            '2MASS J14333139+3417472': [5],
-            'CR Dra': [12,63],
+false_pos = {'2MASS J09481615+5114518': [1,10,2,3,], # 
+            '2MASS J14333139+3417472': [7,],
+            'CR Dra': [], # one missing between 113 and 114, 123 and 124 and 125, actually quite a lot missing
             'CW UMa': [],
             'DG CVn': [10,12,14,15],
             'DO Cep': [],
@@ -104,18 +104,18 @@ parula_colors = []
 cmap = cm.get_cmap(parula, 2)
 for i in range(cmap.N):
     rgb = cmap(i)[:3]
-    parula_colors.append(matplotlib.colors.rgb2hex(rgb))
+    parula_colors.append(mpl.colors.rgb2hex(rgb))
 parula_colors = np.array(parula_colors)
 
 
 def load_lightcurve(starname,radius=10.):
     if starname == 'WX Uma' or starname == 'TIC 252803603':
       print('Doing a special reduction for WX UMa')
-      tpf = lk.search_targetpixelfile('TIC 252803603').download()
+      tpf = lk.search_targetpixelfile('TIC 252803603',exptime=120).download()
       corrector = lk.TessPLDCorrector(tpf)
       data_all = [corrector.correct()]
     else:
-      search = lk.search_lightcurvefile(starname,radius=radius)
+      search = lk.search_lightcurvefile(starname,radius=radius,exptime=120)
       search = search[np.where(search.target_name==search.target_name[0])]
       data_all = search.download_all()
     tics, time, flux, errs, sects = [] ,[] ,[], [], []
@@ -172,7 +172,7 @@ def get_flares(tics,time,flux,avg_preds,errs):
                       flux=flux,
                       predictions=avg_preds,
                       flux_err=errs)
-    ff.identify_flare_peaks(threshold=0.6)
+    ff.identify_flare_peaks(threshold=0.5)
     return ff.flare_table
 
 def get_flare_rate(time,flare_table,name=None):
