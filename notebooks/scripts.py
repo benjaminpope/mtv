@@ -107,17 +107,45 @@ for i in range(cmap.N):
     parula_colors.append(mpl.colors.rgb2hex(rgb))
 parula_colors = np.array(parula_colors)
 
-
-def load_lightcurve(starname,radius=10.):
+def download_lightcurve(starname,radius=10.):
     if starname == 'WX Uma' or starname == 'TIC 252803603':
-      print('Doing a special reduction for WX UMa')
-      tpf = lk.search_targetpixelfile('TIC 252803603',exptime=120).download()
-      corrector = lk.TessPLDCorrector(tpf)
-      data_all = [corrector.correct()]
+          print('Doing a special reduction for WX UMa')
+          tpf = lk.search_targetpixelfile('TIC 252803603',exptime=120).download()
+          corrector = lk.TessPLDCorrector(tpf)
+          data_all = [corrector.correct()]
     else:
       search = lk.search_lightcurvefile(starname,radius=radius,exptime=120)
       search = search[np.where(search.target_name==search.target_name[0])]
       data_all = search.download_all()
+    return data_all
+
+
+def load_lightcurve(starname,radius=10.,from_saved=True):
+    # first look for files
+    if from_saved:
+        try:
+            fnames = glob.glob('../data/lcs/%s*.fits' % (starname.replace(' ','_').lower()))
+            fnames.sort()
+            tics = [fname[-12:-8] for fname in fnames]
+            if len(fnames)>0:
+                data_all = []
+                for fname in fnames:
+                    d = lk.open(fname) 
+                    d.targetid = int(fname[-12:-8])
+                    data_all.append(d)
+                
+                print('Loaded from saved files',fnames)
+            else:
+                print('No saved files!')
+                return None
+        except:
+            data_all = download_lightcurve(starname,radius=radius)
+            print('Downloaded lightcurve!')
+    else: # if no files, download 
+        data_all = download_lightcurve(starname,radius=radius)
+        print('Downloaded lightcurve!')
+        
+    # read these out into the format that stella likes 
     tics, time, flux, errs, sects = [] ,[] ,[], [], []
 
     for data in data_all:
@@ -125,6 +153,8 @@ def load_lightcurve(starname,radius=10.):
           d = data.PDCSAP_FLUX.remove_nans().normalize()
         except:
           d = data.remove_nans().normalize()
+        qq = (d.quality==0)
+        d = d[qq]
         time.append(d.time.value)
         flux.append(d.flux)
         errs.append(d.flux_err)
@@ -172,7 +202,7 @@ def get_flares(tics,time,flux,avg_preds,errs):
                       flux=flux,
                       predictions=avg_preds,
                       flux_err=errs)
-    ff.identify_flare_peaks(threshold=0.5)
+    ff.identify_flare_peaks(threshold=0.6)
     return ff.flare_table
 
 def get_flare_rate(time,flare_table,name=None):

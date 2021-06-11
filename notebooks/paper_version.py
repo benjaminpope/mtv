@@ -74,15 +74,15 @@ for j in range(len(names)):
     print('\n\nDoing target %d/%d: %s' % (j, len(names),name))
 
 
-    if  np.ma.is_masked(target['TIC ID']) is False: # some targets do not resolve normally but I have manually identified their TIC ID
-        print('Loading Light Curve for TIC %d' %  target['TIC ID'])
-        tics, time, flux, errs, sects, data_all = load_lightcurve('TIC %d' % target['TIC ID'])
-        tic = target['TIC ID']
-    else:
-        print('Loading Light Curve for name %s' %  name)
+    # if  np.ma.is_masked(target['TIC ID']) is False: # some targets do not resolve normally but I have manually identified their TIC ID
+    #     print('Loading Light Curve for TIC %d' %  target['TIC ID'])
+    #     tics, time, flux, errs, sects, data_all = load_lightcurve('TIC %d' % target['TIC ID'])
+    #     tic = target['TIC ID']
+    # else:
+    print('Loading Light Curve for name %s' %  name)
 
-        tics, time, flux, errs, sects, data_all = load_lightcurve(name)
-        tic = tics[0]
+    tics, time, flux, errs, sects, data_all = load_lightcurve(name)
+    tic = tics[0]
 
     print('Loaded light curve!\n')
 
@@ -106,6 +106,7 @@ for j in range(len(names)):
         print('Saved avg_preds')
 
     flare_table = unique(get_flares(tics,time,flux,avg_preds,errs))
+    nflares = len(flare_table)
     flare_table.write('%sflares_%s.csv' % (savedir,name.replace(' ','_').lower()),format='ascii')
     print('Saved flare table to %sflares_%s.csv' % (savedir,name.replace(' ','_').lower()))
 
@@ -130,7 +131,7 @@ for j in range(len(names)):
         print('Saved simultaneous plots to %s' % figname)
 
     f = open('%s%s_output.txt' % (savedir,name.replace(' ','_').lower()),'w')
-    f.write('%s\n%f\n%f\n%d\n%d\n' % (name,period,flare_rate.value,nsectors,tic))
+    f.write('%s\n%f\n%d\n%f\n%d\n%d\n' % (name,period,nflares,flare_rate.value,nsectors,tic))
     f.close()
     print('Saved fit to %s%s_output.txt' % (savedir,name.replace(' ','_').lower()))
     # except:
