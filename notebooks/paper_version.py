@@ -67,9 +67,9 @@ for j in range(len(names)):
         print('No data for %s, continuing' % str(name))
         continue
 
-    if '%s%s_output.txt' % (savedir,name.replace(' ','_').lower()) in saved_files:
-        print('\n\nAlready done',name)
-        continue
+    # if '%s%s_output.txt' % (savedir,name.replace(' ','_').lower()) in saved_files:
+    #     print('\n\nAlready done',name)
+    #     continue
 
     print('\n\nDoing target %d/%d: %s' % (j, len(names),name))
 
