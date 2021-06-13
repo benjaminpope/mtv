@@ -131,7 +131,7 @@ for j in range(len(names)):
         print('Saved simultaneous plots to %s' % figname)
 
     f = open('%s%s_output.txt' % (savedir,name.replace(' ','_').lower()),'w')
-    f.write('%s\n%f\n%d\n%f\n%d\n%d\n' % (name,period,nflares,flare_rate.value,nsectors,tic))
+    f.write('%s\n%f\n%d\n%f\n%d\n%d\n' % (name,period,nflares,flare_rate.value,nsectors,int(tic)))
     f.close()
     print('Saved fit to %s%s_output.txt' % (savedir,name.replace(' ','_').lower()))
     # except:
