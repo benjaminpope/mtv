@@ -13,12 +13,12 @@ import lightkurve as lk
 
 from tqdm import tqdm
 
+from scripts import *
+
 import warnings
 warnings.filterwarnings("ignore")
 
 import glob, os
-
-from astropy.table import Table
 
 plt.rcParams['font.size'] = 20
 mpl.rcParams["font.family"] = "Times New Roman"
@@ -57,18 +57,11 @@ for name in names:
     flares.write('%sflares_%s.csv' % (savedir,name.replace(' ','_').lower()),format='ascii') # catch and fix this
 
     tic = data['TIC'][np.where(data['Name']==name)]
-    search = lk.search_lightcurvefile('TIC %d' % tic,exptime=120) # why is the TIC wrong?
+    tics, time, flux, errs, sects, data_all = load_lightcurve(name)
+    lcs = lk.collections.LightCurveCollection(data_all).stitch().normalize().remove_nans()
 
-    if name == 'WX Uma':
-        print('Doing a special reduction for WX UMa')
-        tpf = lk.search_targetpixelfile('TIC 252803603',exptime=120).download()
-        corrector = lk.TessPLDCorrector(tpf)
-        lcs = corrector.correct().remove_nans().normalize()
-    else:
-        lcs = search.download_all().stitch().remove_nans().normalize()
-        # all_lcs.append(lcs)
     avg_preds = []
-    for j in range(len(search)):
+    for j in range(len(sects)):
         avg_preds.append(Table.read('%savg_preds_%s_%d.csv' % (savedir,name.replace(' ','_').lower(), j))['avg_preds'].data)
     avg_preds = np.hstack(np.array(avg_preds))
     # all_preds.append(avg_preds[0])

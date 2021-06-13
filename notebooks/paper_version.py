@@ -106,9 +106,11 @@ for j in range(len(names)):
         print('Saved avg_preds')
 
     flare_table = unique(get_flares(tics,time,flux,avg_preds,errs))
-    nflares = len(flare_table)
     flare_table.write('%sflares_%s.csv' % (savedir,name.replace(' ','_').lower()),format='ascii')
     print('Saved flare table to %sflares_%s.csv' % (savedir,name.replace(' ','_').lower()))
+
+    flare_table = remove_false_positives(time,flare_table,name)
+    nflares = len(flare_table)
 
     flare_rate = get_flare_rate(time,flare_table)
     print('Flare rate:',flare_rate)
