@@ -120,20 +120,21 @@ def download_lightcurve(starname,radius=10.):
     return data_all
 
 
-def load_lightcurve(starname,radius=10.,from_saved=True):
+def load_lightcurve(starname,radius=10.,from_saved=True,save=True):
     # first look for files
     if from_saved:
         try:
             fnames = glob.glob('../data/lcs/%s*.fits' % (starname.replace(' ','_').lower()))
             fnames.sort()
-            tics = [fname[-12:-8] for fname in fnames]
+            sects = [fname[-12:-8] for fname in fnames]
             if len(fnames)>0:
                 data_all = []
                 for fname in fnames:
-                    d = lk.open(fname) 
+                    d = lk.open(fname).remove_nans().normalize() 
                     d.targetid = int(fname[-12:-8])
                     data_all.append(d)
-                
+                    d.targetid = int(d.meta['LABEL'])# ach gotta fix this I fucked it up
+
                 print('Loaded from saved files',fnames)
             else:
                 print('No saved files!')
@@ -160,6 +161,9 @@ def load_lightcurve(starname,radius=10.,from_saved=True):
         errs.append(d.flux_err)
         tics.append(d.targetid)
         sects.append(d.sector)
+        if save:
+            savename = '../data/lcs/%s_s%04d_lc.fits' % (starname.replace(' ','_').lower(),d.sector)
+            d.to_fits(savename,overwrite=True)
 
     return tics, time, flux, errs, sects, data_all
 
