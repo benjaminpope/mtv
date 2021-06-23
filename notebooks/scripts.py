@@ -26,7 +26,7 @@ Port of Adina's script for CR Dra analysis with
 stella
 -----------------------------------------------'''
 
-model_dir = '/Users/benjaminpope/Downloads/run01/'
+model_dir = '../data/run01/'
 # model_dir = '/Users/benjaminpope/.stella/models/'
 
 models = [os.path.join(model_dir,i) for i in
