@@ -29,7 +29,7 @@ names = targets['Name']
 print(targets.keys())
 print(names)
 
-savedir = 'results/reanalysis/'
+savedir = 'results/final/'
 
 saved_files = glob.glob(savedir+'*')
 
