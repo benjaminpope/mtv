@@ -27,7 +27,7 @@ targets = targets[targets['TESS?'] != 'N']
 names = targets['Name']
 print(targets.keys())
 
-savedir = 'results/simultaneous/'
+savedir = '../results/simultaneous/'
 
 saved_files = glob.glob(savedir+'*')
 
