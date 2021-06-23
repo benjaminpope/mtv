@@ -82,19 +82,19 @@ cm_data = [[0.2081, 0.1663, 0.5292], [0.2116238095, 0.1897809524, 0.5776761905],
   0.0948380952], [0.9661, 0.9514428571, 0.0755333333], 
  [0.9763, 0.9831, 0.0538]]
 
-false_pos = {'2MASS J09481615+5114518': [], # 
-            '2MASS J14333139+3417472': [7],
-            'CR Dra': [28,81,172], # one before 189 that's kinda big, one between 76 and 77, 81 is a duplicate
-            'CW UMa': [4,24,], # one missing between 8 and 9
-            'DG CVn': [10,12,2,21,22,26,27,28,29,34,79], # regularly identifying rotational modulation as flares, missing 2 between 32 and 33, one after 62 before 63
-            'DO Cep': [1,20,28,30,36,38],
-            'G 240-45': [0,1,11,26,31,33,41,43,59,6,60,61,7,70,71,], # missing a big between 31 and 32, most of them are close to the noise
-            'GJ 1151': [1,5,7,9],
-            'GJ 3861': [39,4,52,],
+false_pos = {'2MASS J09481615+5114518': [4,5], # 
+            '2MASS J14333139+3417472': [],
+            'CR Dra': [118,195,], # misses one between 89 and 90, 96 and 97
+            'CW UMa': [], 
+            'DG CVn': [20,37,60,62,], 
+            'DO Cep': [1,13,28,],
+            'G 240-45': [13,14,15,16,2,3,5,6,7,9], 
+            'GJ 1151': [], # 0 is pretty questionable
+            'GJ 3861': [16,],
             'GJ 450': [],
             'GJ 625': [], 
-            'LP 169-22': [1,12,2,7],
-            'LP 212-62': [11,12,14,18,19,2,23,25,26,30,4],
+            'LP 169-22': [],
+            'LP 212-62': [1,13,2,8,],
             'LP 259-39': [],
             'WX Uma': []}
 

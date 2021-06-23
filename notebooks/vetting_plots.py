@@ -39,7 +39,7 @@ names = np.array(data['Name'])
 quiescent = ['GJ 625', 'GJ 450', 'GJ 1151', 'LP 169-22', 'G 240-45']
 binaries = ['DG CVn', 'CR Dra']
 
-savedir = 'results/reanalysis/'
+savedir = '../results/final/'
 
 # iterate over stars
 
@@ -87,3 +87,5 @@ for name in names:
         ax.set_title('%s: flare %d' % (name,k))
         plt.savefig('%s/vetting/%s_flare_%d.png' % (savedir,name.replace(' ','_').lower(),k),
                    bbox_inches='tight',rasterized=True)
+
+print('Finished all stars!')

@@ -109,7 +109,7 @@ for j in range(len(names)):
     flare_table.write('%sflares_%s.csv' % (savedir,name.replace(' ','_').lower()),format='ascii')
     print('Saved flare table to %sflares_%s.csv' % (savedir,name.replace(' ','_').lower()))
 
-    flare_table = remove_false_positives(time,flare_table,name)
+    flare_table = remove_false_positives(time,flare_table,name) # comment out on first run
     nflares = len(flare_table)
 
     flare_rate = get_flare_rate(time,flare_table)
@@ -121,14 +121,14 @@ for j in range(len(names)):
     print('Saved zoomed plots to %s' % figname)
 
     do_plots(tics,time,flux,avg_preds,errs,data_all,zoom=False)
-    figname = '%sflare_lc_nozoom_%s_.png' % (savedir,name.replace(' ','_').lower())
+    figname = '%sflare_lc_nozoom_%s.png' % (savedir,name.replace(' ','_').lower())
     plt.savefig(figname,bbox_inches='tight')
     print('Saved no-zoom plots to %s' % figname)
 
     if name in stars_simultaneous.keys():
         tstart = stars_simultaneous[name]
         simultaneous_plots(tics,time,flux,avg_preds,errs,data_all,tstart)
-        figname = '%ssimultaneous_%s_.png' % (savedir,name.replace(' ','_').lower())
+        figname = '%ssimultaneous_%s.png' % (savedir,name.replace(' ','_').lower())
         plt.savefig(figname,bbox_inches='tight')
         print('Saved simultaneous plots to %s' % figname)
 
