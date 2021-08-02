@@ -200,6 +200,7 @@ def run_cnn(tics,time,flux,errs):
 
     return avg_preds 
 
+
 def get_flares(tics,time,flux,avg_preds,errs):
     ff = stella.FitFlares(id=tics,
                       time=time,
@@ -222,6 +223,24 @@ def remove_false_positives(time,flare_table,name):
       print('Removing %d flares' % len(false_pos[name]))
       return flare_table
 
+def filter_flares(data_all,flare_table):  
+
+    # SNR filter - 3x RMS of smoothed light curve - use data_all to do this
+    rms = get_rms(data_all)
+    significant = (flare_table['amp']-1)>=3*rms
+    
+    # outlier filter - filter any flare candidates where the fitted duration is shorter than two TESS data points (4 mins).
+    durations = np.array(flare_table['rise'])+np.array(flare_table['fall'])*24*60
+    outliers = (durations<4)
+    new_flare_table = flare_table[significant*(~outliers)]
+    return new_flare_table
+
+def get_rms(data_all):
+    rms = []
+    for d in data_all:
+        flat, trend = d.remove_nans().normalize().flatten(window_length=201,return_trend=True,sigma=2)
+        rms.append(flat.remove_outliers().flux.value.std())
+    return np.mean(rms)
 
 def group_sectors(data_all):
     sectors = [d.sector for d in data_all]

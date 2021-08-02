@@ -109,8 +109,12 @@ for j in range(len(names)):
     flare_table.write('%sflares_%s.csv' % (savedir,name.replace(' ','_').lower()),format='ascii')
     print('Saved flare table to %sflares_%s.csv' % (savedir,name.replace(' ','_').lower()))
 
-    flare_table = remove_false_positives(time,flare_table,name) # comment out on first run
+    n_tot = len(flare_table)
+    print('Filtering flares')
+    flare_table = filter_flares(data_all,flare_table)
+    # flare_table = remove_false_positives(time,flare_table,name) # comment out on first run
     nflares = len(flare_table)
+    print('Filtered flares: %d out of %d are legit' % (nflares,n_tot))
 
     flare_rate = get_flare_rate(time,flare_table)
     print('Flare rate:',flare_rate)
