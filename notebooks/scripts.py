@@ -120,7 +120,7 @@ def download_lightcurve(starname,radius=10.):
     return data_all
 
 
-def load_lightcurve(starname,radius=10.,from_saved=True,save=True):
+def load_lightcurve(starname,radius=10.,from_saved=True,save=True,verbose=True):
     # first look for files
     if from_saved:
         try:
@@ -135,16 +135,20 @@ def load_lightcurve(starname,radius=10.,from_saved=True,save=True):
                     data_all.append(d)
                     d.targetid = int(d.meta['LABEL'])# ach gotta fix this I fucked it up
 
-                print('Loaded from saved files',fnames)
+                if verbose:
+                    print('Loaded from saved files',fnames)
             else:
-                print('No saved files!')
+                if verbose:
+                    print('No saved files!')
                 return None
         except:
             data_all = download_lightcurve(starname,radius=radius)
-            print('Downloaded lightcurve!')
+            if verbose:
+                print('Downloaded lightcurve!')
     else: # if no files, download 
         data_all = download_lightcurve(starname,radius=radius)
-        print('Downloaded lightcurve!')
+        if verbose:
+            print('Downloaded lightcurve!')
         
     # read these out into the format that stella likes 
     tics, time, flux, errs, sects = [] ,[] ,[], [], []

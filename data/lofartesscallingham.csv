@@ -20,7 +20,7 @@ GJ 1151,Y,Y,N,,,0.63,0.15,0.02,125,,M Dwarf,Quiescent
 WX Uma,Y,Y,Y,,252803603,0.45,0.09,0.36,0.78,,M Dwarf,
 GJ 450,Y,Y,Y,,,0.54,0.2,0.66,23,Y,M Dwarf,No flare simultaneously!
 GJ 3861,Y,Y,N,,,3.64,0.57,3.36,,,M Dwarf,Just missed simultaneous
-2MASS J09481615+5114518,Y,Y,N,,,28.71,2.27,<8.44,,Y,M Dwarf,Just missed simultaneous
+2MASS J09481615+5114518,Y,Y,N,,,28.71,2.27,0.28,,Y,M Dwarf,Just missed simultaneous
 LP 212-62,Y,Y,N,,,28.34,1.55,0.38,60.75,Very,M Dwarf,Just missed simultaneous
 HAT 182-00605,N,Y,N,,,2.94,0.57,3.4,2.21,,M Dwarf,TIC 8174712 and 8174713 - no data
 DO Cep,Y,Y,N,,414587194,0.92,0.1,0.23,0.41,,M Dwarf,"2016398819 is a proper motion match; but no SC data. TIC 414587194 very nearby, less good match, has SC data. Need to check on this"
