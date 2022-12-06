@@ -107,16 +107,17 @@ for i in range(cmap.N):
     parula_colors.append(mpl.colors.rgb2hex(rgb))
 parula_colors = np.array(parula_colors)
 
-def download_lightcurve(starname,radius=10.):
+def download_lightcurve(starname,radius=10.,check_name=False):
     if starname == 'WX Uma' or starname == 'TIC 252803603':
-          print('Doing a special reduction for WX UMa')
-          tpf = lk.search_targetpixelfile('TIC 252803603',exptime=120).download()
-          corrector = lk.TessPLDCorrector(tpf)
-          data_all = [corrector.correct()]
+        print('Doing a special reduction for WX UMa')
+        tpf = lk.search_targetpixel('TIC 252803603',exptime=120).download()
+        corrector = lk.TessPLDCorrector(tpf)
+        data_all = [corrector.correct()]
     else:
-      search = lk.search_lightcurvefile(starname,radius=radius,exptime=120)
-      search = search[np.where(search.target_name==search.target_name[0])]
-      data_all = search.download_all()
+        search = lk.search_lightcurve(starname,radius=radius,exptime=120,author="SPOC")
+        if check_name:
+            search = search[np.where(search.target_name==search.target_name[0])]
+        data_all = search.download_all()
     return data_all
 
 
@@ -230,13 +231,13 @@ def remove_false_positives(time,flare_table,name):
 def filter_flares(data_all,flare_table):  
 
     # SNR filter - 3x RMS of smoothed light curve - use data_all to do this
-    rms = get_rms(data_all)
-    significant = (flare_table['amp']-1)>=3*rms
+    # rms = get_rms(data_all)
+    # significant = (flare_table['amp']-1)>=3*rms
     
     # outlier filter - filter any flare candidates where the fitted duration is shorter than two TESS data points (4 mins).
     durations = np.array(flare_table['rise'])+np.array(flare_table['fall'])*24*60
     outliers = (durations<4)
-    new_flare_table = flare_table[significant*(~outliers)]
+    new_flare_table = flare_table[(~outliers)]
     return new_flare_table
 
 def get_rms(data_all):
